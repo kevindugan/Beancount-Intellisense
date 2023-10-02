@@ -1,0 +1,20 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "beancount",
+	"patterns": [
+		{
+			"include": "#keywords"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "support.function.beancount",
+				"match": "\\b(option|include|open|close)\\b"
+			}]
+		}
+	},
+	"scopeName": "source.beancount",
+	"foldingStartMarker": "^[0-9]{4}-[0-9]{2}-[0-9]{2} (*|!)",
+	"foldingStopMarker": "^[ \t\r]*$"
+}

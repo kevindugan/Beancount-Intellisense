@@ -6,15 +6,24 @@
 import * as vscode from 'vscode';
 import * as assert from 'assert';
 import { getDocUri, activate } from './helper';
+import { CompletionItemKind } from 'vscode-languageclient';
 
 suite('Should do completion', () => {
-	const docUri = getDocUri('completion.txt');
-
-	test('Completes JS/TS in txt file', async () => {
-		await testCompletion(docUri, new vscode.Position(0, 0), {
+	const docUri = getDocUri('completion-closed-accounts.bean');
+	test('Has Closed Accounts', async () => {
+		await testCompletion(docUri, new vscode.Position(5, 0), {
 			items: [
-				{ label: 'JavaScript', kind: vscode.CompletionItemKind.Text },
-				{ label: 'TypeScript', kind: vscode.CompletionItemKind.Text }
+				{label: "Equity:Opening-Balances"}
+			]
+		});
+	});
+
+	const docUri2 = getDocUri('completion-minimal-transaction.beancount');
+	test('Minimal Transaction Completion',async () => {
+		await testCompletion(docUri2, new vscode.Position(4, 4), {
+			items: [
+				{label: "Assets:Car"},
+				{label: "Equity:Opening-Balances"}
 			]
 		});
 	});
@@ -34,10 +43,9 @@ async function testCompletion(
 		position
 	)) as vscode.CompletionList;
 
-	assert.ok(actualCompletionList.items.length >= 2);
+	assert.equal(actualCompletionList.items.length, expectedCompletionList.items.length);
 	expectedCompletionList.items.forEach((expectedItem, i) => {
 		const actualItem = actualCompletionList.items[i];
 		assert.equal(actualItem.label, expectedItem.label);
-		assert.equal(actualItem.kind, expectedItem.kind);
 	});
 }

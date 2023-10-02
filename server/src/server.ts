@@ -21,6 +21,11 @@ import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
 
+import { CharStream, CommonTokenStream, ParseTreeWalker } from 'antlr4';
+import BeancountLexer from './BeancountLexer';
+import BeancountParser from './BeancountParser';
+import BeancountAccountListener from './BeancountAccountListener';
+
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
@@ -189,21 +194,37 @@ connection.onDidChangeWatchedFiles(_change => {
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
 	(_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-		// The pass parameter contains the position of the text document in
-		// which code complete got requested. For the example we ignore this
-		// info and always provide the same completion items.
-		return [
-			{
-				label: 'TypeScript',
-				kind: CompletionItemKind.Text,
-				data: 1
-			},
-			{
-				label: 'JavaScript',
-				kind: CompletionItemKind.Text,
-				data: 2
-			}
-		];
+		const text = documents.get(_textDocumentPosition.textDocument.uri)?.getText();
+
+		const result = [];
+		if (text !== undefined){
+			const input_stream = new CharStream(text);
+			const lexer = new BeancountLexer(input_stream);
+			const token_stream = new CommonTokenStream(lexer);
+			const parser = new BeancountParser(token_stream);
+			const tree = parser.ledger();
+
+			const walker = new BeancountAccountListener();
+			ParseTreeWalker.DEFAULT.walk(walker, tree);
+
+			for (const idx in walker.account_names)
+				result.push({
+					label: walker.account_names[idx],
+					kind: CompletionItemKind.Class,
+					data: 'account-' + idx
+				});
+		}
+
+		console.log(result);
+
+		return result;
+		// return [
+		// 	{
+		// 		label: "Assets:Test",
+		// 		kind: CompletionItemKind.Class,
+		// 		data: 1
+		// 	}
+		// ];
 	}
 );
 
@@ -211,13 +232,13 @@ connection.onCompletion(
 // the completion list.
 connection.onCompletionResolve(
 	(item: CompletionItem): CompletionItem => {
-		if (item.data === 1) {
-			item.detail = 'TypeScript details';
-			item.documentation = 'TypeScript documentation';
-		} else if (item.data === 2) {
-			item.detail = 'JavaScript details';
-			item.documentation = 'JavaScript documentation';
-		}
+		// if (item.data === 1) {
+		// 	item.detail = 'TypeScript details';
+		// 	item.documentation = 'TypeScript documentation';
+		// } else if (item.data === 2) {
+		// 	item.detail = 'JavaScript details';
+		// 	item.documentation = 'JavaScript documentation';
+		// }
 		return item;
 	}
 );
