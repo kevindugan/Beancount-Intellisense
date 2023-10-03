@@ -21,13 +21,12 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+
+    - name: Build
       run: |
         apt update
         apt install -y jq
         npm install -g vsce typescript ts-node jq
-
-    - name: Build
-      run: |
         npm install
         vsce package
 
