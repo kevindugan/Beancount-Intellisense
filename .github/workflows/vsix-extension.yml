@@ -1,0 +1,41 @@
+name: Bundle into VSIX Extension
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+      run: |
+        apt update
+        apt install -y jq
+        npm install -g vsce typescript ts-node jq
+
+    - name: Build
+      run: |
+        npm install
+        vsce package
+
+    # jq '.version' package.json
+
+    - name: Save VSIX file
+      uses: actions/upload-artifact@v3
+      with:
+        name: beancount-intellisense.vsix
+        path: ./beancount-intellisense-*.vsix
+        
