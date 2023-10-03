@@ -4,6 +4,27 @@
 	"patterns": [
 		{
 			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#date"
+		},
+		{
+			"include": "#account"
+		},
+		{
+			"include": "#values"
+		},
+		{
+			"include": "#currency"
+		},
+		{
+			"include": "#transaction-status"
 		}
 	],
 	"repository": {
@@ -12,6 +33,69 @@
 				"name": "support.function.beancount",
 				"match": "\\b(option|include|open|close)\\b"
 			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.beancount",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.beancount",
+					"match": "\\\\."
+				}
+			]
+		},
+		"comments": {
+			"name": "comment.line.beancount",
+			"begin": ";",
+			"end": "\n",
+			"patterns": [
+				{
+					"name": "constant.character.escape",
+					"match": "\\\\."
+				}
+			]
+		},
+		"date": {
+			"name": "constant.language",
+			"patterns": [
+				{
+					"name": "constant.language.date.beancount",
+					"match": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+				}
+			]
+		},
+		"account": {
+			"patterns": [
+				{
+					"name": "entity.name.class.beancount",
+					"match": "(Assets|Expenses|Liabilities|Income|Equity):[a-zA-Z0-9:-]+"
+				}
+			]
+		},
+		"values": {
+			"patterns": [
+				{
+					"name": "constant.numeric",
+					"match": "-?[1-9][0-9,.]*"
+				}
+			]
+		},
+		"currency": {
+			"patterns": [
+				{
+					"name": "constant.language.currency.beancount",
+					"match": "[A-Z]{3,}"
+				}
+			]
+		},
+		"transaction-status": {
+			"patterns": [
+				{
+					"name": "constant.language.transaction-state",
+					"match": "!|\\*"
+				}
+			]
 		}
 	},
 	"scopeName": "source.beancount",

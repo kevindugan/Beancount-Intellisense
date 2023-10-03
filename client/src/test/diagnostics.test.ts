@@ -10,11 +10,10 @@ import { getDocUri, activate } from './helper';
 suite('Should get diagnostics', () => {
 	const docUri = getDocUri('diagnostics.beancount');
 
-	test('Diagnoses uppercase texts', async () => {
+	test('Diagnoses wrong token', async () => {
 		await testDiagnostics(docUri, [
-			{ message: 'ANY is all uppercase.', range: toRange(0, 0, 0, 3), severity: vscode.DiagnosticSeverity.Warning, source: 'ex' },
-			{ message: 'ANY is all uppercase.', range: toRange(0, 14, 0, 17), severity: vscode.DiagnosticSeverity.Warning, source: 'ex' },
-			{ message: 'OS is all uppercase.', range: toRange(0, 18, 0, 20), severity: vscode.DiagnosticSeverity.Warning, source: 'ex' }
+			{ message: 'token recognition error at: \'s\'', range: toRange(0, 15, 0, 19), severity: vscode.DiagnosticSeverity.Error, source: 'beancount' },
+			{ message: 'missing ACCOUNT_NAME at \'<EOF>\'', range: toRange(5, 4, 5, 4), severity: vscode.DiagnosticSeverity.Error, source: 'beancount' }
 		]);
 	});
 });
