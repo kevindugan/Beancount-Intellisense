@@ -31,16 +31,27 @@ jobs:
       id: set_var
       run: |
         content=`cat ./package.json`
-        # the following lines are only required for multi line json
         content="${content//'%'/'%25'}"
         content="${content//$'\n'/'%0A'}"
         content="${content//$'\r'/'%0D'}"
-        # end of optional handling for multi line json
-        echo "packageJson=$content" >> $GITHUB_OUTPUT
+        echo "packageJson=$content" >> $GITHUB_ENV
+
+
+      # echo "packageJson=<<EOF" >> $GITHUB_ENV
+      # cat "./package.json" >> $GITHUB_ENV
+      # echo "EOF" >> $GITHUB_ENV
+
+      # content=`cat ./package.json`
+      # # the following lines are only required for multi line json
+      # content="${content//'%'/'%25'}"
+      # content="${content//$'\n'/'%0A'}"
+      # content="${content//$'\r'/'%0D'}"
+      # # end of optional handling for multi line json
+      # echo "packageJson=$content" >> $GITHUB_OUTPUT
 
     - name: Save VSIX file
       uses: actions/upload-artifact@v3
       with:
-        name: beancount-intellisense-${{ fromJson(steps.set_var.outputs.packageJson).version }}.vsix
-        path: ./beancount-intellisense-${{ fromJson(steps.set_var.outputs.packageJson).version }}.vsix
+        name: beancount-intellisense-${{ fromJson(env.packageJson).version }}.vsix
+        path: ./beancount-intellisense-${{ fromJson(env.packageJson).version }}.vsix
         
