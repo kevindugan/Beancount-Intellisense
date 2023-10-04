@@ -22,13 +22,22 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Build
+    - name: Setup Dependencies
       run: |
-        apt update
-        apt install -y jq
         npm install -g vsce typescript ts-node jq
         npm install
         vsce package
+    - name: Get Package Version
+      id: set_var
+      run: |
+        content=`cat ./path/to/package.json`
+        # the following lines are only required for multi line json
+        content="${content//'%'/'%25'}"
+        content="${content//$'\n'/'%0A'}"
+        content="${content//$'\r'/'%0D'}"
+        # end of optional handling for multi line json
+        echo "::set-output name=packageJson::$content"
+    - run: echo "${{fromJson(steps.set_var.outputs.packageJson).version}}"
 
     # jq '.version' package.json
 
