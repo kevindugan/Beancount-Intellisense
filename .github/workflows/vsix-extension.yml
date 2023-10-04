@@ -36,7 +36,7 @@ jobs:
         content="${content//$'\r'/'%0D'}"
         echo "packageJson=$content" >> $GITHUB_ENV
 
-    - run: echo "${{ fromJson(env.packageJson).version }}"
+    - run: echo "$env.packageJson"
 
       # echo "packageJson=<<EOF" >> $GITHUB_ENV
       # cat "./package.json" >> $GITHUB_ENV
