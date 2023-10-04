@@ -37,13 +37,10 @@ jobs:
         content="${content//$'\r'/'%0D'}"
         # end of optional handling for multi line json
         echo "::set-output name=packageJson::$content"
-    - run: echo "${{fromJson(steps.set_var.outputs.packageJson).version}}"
-
-    # jq '.version' package.json
 
     - name: Save VSIX file
       uses: actions/upload-artifact@v3
       with:
-        name: beancount-intellisense.vsix
-        path: ./beancount-intellisense-*.vsix
+        name: beancount-intellisense-${{ fromJson(steps.set_var.outputs.packageJson).version }}.vsix
+        path: ./beancount-intellisense-${{ fromJson(steps.set_var.outputs.packageJson).version }}.vsix
         
